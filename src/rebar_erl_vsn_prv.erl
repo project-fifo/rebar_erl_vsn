@@ -25,8 +25,14 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-    io:format("Vsns: ~p~n", [enumerate(versions())]),
-    {ok, State}.
+    Vsns = enumerate(versions()),
+    io:format("Vsns: ~p~n", [Vsns]),
+    io:format("State: ~p~n", [State]),
+    Opts = rebar_state:get(State, erl_opts),
+    io:format("Opts: ~p~n", [Opts]),
+    Opts1 = Vsns ++ Opts,
+    State1 = rebar_state:set(State, erl_opts, Opts1),
+    {ok, State1}.
 
 -spec format_error(any()) ->  iolist().
 format_error(Reason) ->
@@ -39,6 +45,7 @@ versions() ->
     to_vsn(Vsn1, []).
 
 enumerate(V) ->
+    io:format("V: ~p~n", [V]),
     enumerate(V, []).
 
 enumerate({18, 0}, Acc) ->
@@ -53,15 +60,15 @@ enumerate({14, 0}, Acc) ->
     [{d, "14.0"} | Acc];
 enumerate({Maj, Min}, Acc) when Maj >= 14, Min > 0 ->
     V = io_lib:format("~p.~p", [Maj, Min]),
-    [{d, V} | Acc].
+    enumerate({Maj, Min - 1}, [{d, lists:flatten(V)} | Acc]).
 
 
 extract_version([H | T], Acc) when H =/= $- ->
     extract_version(T, [H | Acc]);
 extract_version(_, Acc) ->
-    Acc.
+    lists:reverse(Acc).
 
 to_vsn([H | T], Acc) when H =:= $. ->
     {list_to_integer(Acc), list_to_integer(T)};
 to_vsn([H | T], Acc) ->
-    to_vsn(T, [H | Acc]).
+    to_vsn(T, Acc ++ [H]).
