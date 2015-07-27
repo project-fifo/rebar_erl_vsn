@@ -36,21 +36,20 @@ format_error(Reason) ->
 versions() ->
     Vsn = rebar_api:get_arch(),
     Vsn1 = extract_version(Vsn, []),
-    {Maj, Min} = to_vsn(Vsn1, []).
+    to_vsn(Vsn1, []).
 
-    enumerate({17, 5}, [{d, "18.0"} | Acc]);
 enumerate(V) ->
     enumerate(V, []).
 
 enumerate({18, 0}, Acc) ->
     enumerate({17, 5}, [{d, "18.0"} | Acc]);
 enumerate({17, 0}, Acc) ->
-    enumerate({17, 5}, [{d, "18.0"} | Acc]);
+    enumerate({16, 3}, [{d, "17.0"} | Acc]);
 enumerate({16, 0}, Acc) ->
-    enumerate({17, 5}, [{d, "18.0"} | Acc]);
+    enumerate({15, 3}, [{d, "16.0"} | Acc]);
 enumerate({15, 0}, Acc) ->
-    enumerate({17, 5}, [{d, "18.0"} | Acc]);
-enumerate({14, 0} | Acc) ->
+    enumerate({14, 4}, [{d, "15.0"} | Acc]);
+enumerate({14, 0}, Acc) ->
     [{d, "14.0"} | Acc];
 enumerate({Maj, Min}, Acc) when Maj >= 14, Min > 0 ->
     V = io_lib:format("~p.~p", [Maj, Min]),
