@@ -2,7 +2,7 @@
 
 -export([init/1, do/1, format_error/1]).
 
--define(PROVIDER, 'rebar_erl_vsn').
+-define(PROVIDER, 'erl_vsn').
 -define(DEPS, [app_discovery]).
 
 %% ===================================================================
@@ -25,7 +25,7 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-    io:format("Vsn: ~p", [versions()]),
+    io:format("Vsns: ~p~n", [enumerate(versions())]),
     {ok, State}.
 
 -spec format_error(any()) ->  iolist().
@@ -34,16 +34,35 @@ format_error(Reason) ->
 
 
 versions() ->
-    Vsn = case erlang:system_info(otp_release) of
-              "R" ++ V ->
-                  extract_numbers(V, "");
-              V ->
-                  V
-          end,
-    list_to_integer(Vsn).
+    Vsn = rebar_api:get_arch(),
+    Vsn1 = extract_version(Vsn, []),
+    {Maj, Min} = to_vsn(Vsn1, []).
 
-extract_numbers([H | T], Acc) when H >= $0,
-                                   H =< $9 ->
-    Acc;
-extract_numbers(_, Acc) ->
+    enumerate({17, 5}, [{d, "18.0"} | Acc]);
+enumerate(V) ->
+    enumerate(V, []).
+
+enumerate({18, 0}, Acc) ->
+    enumerate({17, 5}, [{d, "18.0"} | Acc]);
+enumerate({17, 0}, Acc) ->
+    enumerate({17, 5}, [{d, "18.0"} | Acc]);
+enumerate({16, 0}, Acc) ->
+    enumerate({17, 5}, [{d, "18.0"} | Acc]);
+enumerate({15, 0}, Acc) ->
+    enumerate({17, 5}, [{d, "18.0"} | Acc]);
+enumerate({14, 0} | Acc) ->
+    [{d, "14.0"} | Acc];
+enumerate({Maj, Min}, Acc) when Maj >= 14, Min > 0 ->
+    V = io_lib:format("~p.~p", [Maj, Min]),
+    [{d, V} | Acc].
+
+
+extract_version([H | T], Acc) when H =/= $- ->
+    extract_version(T, [H | Acc]);
+extract_version(_, Acc) ->
     Acc.
+
+to_vsn([H | T], Acc) when H =:= $. ->
+    {list_to_integer(Acc), list_to_integer(T)};
+to_vsn([H | T], Acc) ->
+    to_vsn(T, [H | Acc]).
