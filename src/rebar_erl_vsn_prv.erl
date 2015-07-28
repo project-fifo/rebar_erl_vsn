@@ -23,9 +23,7 @@ init(State) ->
 do(State) ->
     Vsns = enumerate(versions()),
     Opts = rebar_state:get(State, erl_opts),
-    io:format("Opts: ~p~n", [Opts]),
     Opts1 = remove_dups(Vsns ++ Opts),
-    io:format("Opts1: ~p~n", [Opts1]),
     State1 = rebar_state:set(State, erl_opts, Opts1),
     {ok, State1}.
 
@@ -40,7 +38,6 @@ versions() ->
     to_vsn(Vsn1, []).
 
 enumerate(V) ->
-    io:format("V: ~p~n", [V]),
     enumerate(V, []).
 
 enumerate({18, 0}, Acc) ->
