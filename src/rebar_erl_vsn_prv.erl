@@ -24,7 +24,7 @@ do(State) ->
     Vsns = enumerate(versions()),
     Opts = rebar_state:get(State, erl_opts),
     io:format("Opts: ~p~n", [Opts]),
-    Opts1 = Vsns ++ Opts,
+    Opts1 = remove_dups(Vsns ++ Opts),
     io:format("Opts1: ~p~n", [Opts1]),
     State1 = rebar_state:set(State, erl_opts, Opts1),
     {ok, State1}.
@@ -67,3 +67,6 @@ to_vsn([H | T], Acc) when H =:= $. ->
     {list_to_integer(Acc), list_to_integer(T)};
 to_vsn([H | T], Acc) ->
     to_vsn(T, Acc ++ [H]).
+
+remove_dups([])    -> [];
+remove_dups([H|T]) -> [H | [X || X <- remove_dups(T), X /= H]].
