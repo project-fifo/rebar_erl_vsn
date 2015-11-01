@@ -34,3 +34,49 @@ Each major/minor pair get a define like `17.5` or `18.0` in addition the followi
 * `new_hash` (`16.0`) - new crypto:hash functions are the default and old ones deprecated.
 * `maps`, `namespaced_types` (`17.0`) - maps are introduced, types like `dict()` now require a namespace.
 * `large_maps` (`18`) - large maps are now feasable, while in R17 they caused performance problems
+
+
+Examples
+--------
+
+Code that runs on R18 and above:
+
+
+```erlang
+-ifdef('18.0').
+version() ->
+  "18 and above".
+-else.
+version() ->
+  "before 17".
+-endif.
+```
+
+
+Targeting R17 (all variants) specially
+
+```erlang
+-ifdef('17.0').
+-ifndef('18.0').
+%% Code only executed in R17.*
+-else.
+%% Code executed for R18+
+-endif.
+-else.
+%% Code executed < R17
+-endif.
+```
+
+
+md5 function that does not throw deprecation warnings:
+
+
+```erlang
+-ifdef(new_hash).
+md5(Data) ->
+  crypto:hash(md5, Data).
+-elseif.
+md5(Data) ->
+  crypto:md5(Data).
+-endif.
+```  
