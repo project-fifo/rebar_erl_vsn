@@ -2,6 +2,8 @@
 
 -export([init/1, do/1, format_error/1]).
 
+-behaviour(provider).
+
 -define(PROVIDER, 'erl_vsn').
 -define(DEPS, [app_discovery]).
 
@@ -14,6 +16,7 @@ init(State) ->
         providers:create(
           [{name, ?PROVIDER},            % The 'user friendly' name of the task
            {module, ?MODULE},            % The module implementation of the task
+           {bare, true},
            {deps, ?DEPS}                 % The list of dependencies
            ]),
     {ok, rebar_state:add_provider(State, Provider)}.
@@ -21,10 +24,11 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-    Vsns = enumerate(versions()),
-    Opts = rebar_state:get(State, erl_opts),
-    Opts1 = remove_dups(Vsns ++ Opts),
-    State1 = rebar_state:set(State, erl_opts, Opts1),
+    Vsns = add_events(enumerate(version())),
+    AppInfo = rebar_state:current_app(State),
+    ErlOpts = rebar_app_info:get(AppInfo, erl_opts, []),
+    AppInfo1 = rebar_app_info:set(AppInfo, erl_opts, Vsns ++ ErlOpts),
+    State1 = rebar_state:current_app(State, AppInfo1),
     {ok, State1}.
 
 -spec format_error(any()) ->  iolist().
@@ -32,10 +36,11 @@ format_error(Reason) ->
     io_lib:format("~p", [Reason]).
 
 
-versions() ->
+version() ->
     Vsn = rebar_api:get_arch(),
-    Vsn1 = extract_version(Vsn, []),
-    to_vsn(Vsn1, []).
+    [Vsn1 | _] = re:split(Vsn, "-"),
+    [Maj, Min | _ ] = re:split(Vsn1, "\\."),
+    {binary_to_integer(Maj), binary_to_integer(Min)}.
 
 enumerate(V) ->
     enumerate(V, []).
@@ -54,16 +59,13 @@ enumerate({Maj, Min}, Acc) when Maj >= 14, Maj =< 18, Min > 0 ->
     V = list_to_atom(lists:flatten(io_lib:format("~p.~p", [Maj, Min]))),
     enumerate({Maj, Min - 1}, [{d, V} | Acc]).
 
-
-extract_version([H | T], Acc) when H =/= $- ->
-    extract_version(T, [H | Acc]);
-extract_version(_, Acc) ->
-    lists:reverse(Acc).
-
-to_vsn([H | T], Acc) when H =:= $. ->
-    {list_to_integer(Acc), list_to_integer(T)};
-to_vsn([H | T], Acc) ->
-    to_vsn(T, Acc ++ [H]).
-
-remove_dups([])    -> [];
-remove_dups([H|T]) -> [H | [X || X <- remove_dups(T), X /= H]].
+add_events([]) ->
+    [];
+add_events([V = {d, '18.0'} | R]) ->
+    [V, {d, 'large_maps'} | add_events(R)];
+add_events([V = {d, '17.0'} | R]) ->
+    [V, {d, 'maps'}, {d, 'namespaced_types'} | add_events(R)];
+add_events([V = {d, '16.0'} | R]) ->
+    [V, {d, 'new_hash'} | add_events(R)];
+add_events([V | R]) ->
+    [V | add_events(R)].
