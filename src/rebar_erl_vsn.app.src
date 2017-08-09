@@ -1,15 +1,10 @@
-{application, 'rebar_erl_vsn',
- [{description, "defines for erlang versions"},
-  {vsn, git},
-  {registered, []},
-  {applications,
-   [kernel,
-    stdlib
-   ]},
-  {env,[]},
-  {modules, []},
-
-  {maintainers, ["Heinz N. Gies"]},
-  {licenses, ["MIT"]},
-  {links, []}
- ]}.
+{application,rebar_erl_vsn,
+             [{description,"defines for erlang versions"},
+              {vsn,"0.1.1"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {env,[]},
+              {modules,[]},
+              {maintainers,["Heinz N. Gies"]},
+              {licenses,["MIT"]},
+              {links,[]}]}.
