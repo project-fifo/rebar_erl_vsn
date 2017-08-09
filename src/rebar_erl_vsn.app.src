@@ -1,6 +1,6 @@
 {application, 'rebar_erl_vsn',
  [{description, "defines for erlang versions"},
-  {vsn, "0.1.0"},
+  {vsn, git},
   {registered, []},
   {applications,
    [kernel,

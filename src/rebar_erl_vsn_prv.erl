@@ -28,6 +28,7 @@ do(State) ->
     AppInfo = rebar_state:current_app(State),
     ErlOpts = rebar_app_info:get(AppInfo, erl_opts, []),
     AppInfo1 = rebar_app_info:set(AppInfo, erl_opts, Vsns ++ ErlOpts),
+    %%io:format("vsns: ~p~n", [Vsns]),
     State1 = rebar_state:current_app(State, AppInfo1),
     {ok, State1}.
 
@@ -45,6 +46,12 @@ version() ->
 enumerate(V) ->
     enumerate(V, []).
 
+-define(HEAD_VSN, 20).
+
+enumerate({?HEAD_VSN, 0}, Acc) ->
+    enumerate({19, 3}, [{d, '20.0'} | Acc]);
+enumerate({19, 0}, Acc) ->
+    enumerate({18, 3}, [{d, '19.0'} | Acc]);
 enumerate({18, 0}, Acc) ->
     enumerate({17, 5}, [{d, '18.0'} | Acc]);
 enumerate({17, 0}, Acc) ->
@@ -55,12 +62,14 @@ enumerate({15, 0}, Acc) ->
     enumerate({14, 4}, [{d, '15.0'} | Acc]);
 enumerate({14, 0}, Acc) ->
     [{d, '14.0'} | Acc];
-enumerate({Maj, Min}, Acc) when Maj >= 14, Maj =< 18, Min > 0 ->
+enumerate({Maj, Min}, Acc) when Maj >= 14, Maj =< ?HEAD_VSN, Min > 0 ->
     V = list_to_atom(lists:flatten(io_lib:format("~p.~p", [Maj, Min]))),
     enumerate({Maj, Min - 1}, [{d, V} | Acc]).
 
 add_events([]) ->
     [];
+add_events([V = {d, '20.0'} | R]) ->
+    [V, {d, 'ceil_bif'} | add_events(R)];
 add_events([V = {d, '18.0'} | R]) ->
     [V, {d, 'large_maps'} | add_events(R)];
 add_events([V = {d, '17.0'} | R]) ->
