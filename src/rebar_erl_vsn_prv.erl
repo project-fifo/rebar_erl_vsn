@@ -69,7 +69,7 @@ enumerate({Maj, Min}, Acc) when Maj >= 14, Maj =< ?HEAD_VSN, Min > 0 ->
 add_events([]) ->
     [];
 add_events([V = {d, '20.0'} | R]) ->
-    [V, {d, 'ceil_bif'} | add_events(R)];
+    [V, {d, 'ceil_bif'}, {d, 'high_bit_uniform'} | add_events(R)];
 add_events([V = {d, '19.0'} | R]) ->
     [V, {d, 'rand'} | add_events(R)];
 add_events([V = {d, '18.0'} | R]) ->
