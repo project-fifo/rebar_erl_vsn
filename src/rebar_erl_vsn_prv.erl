@@ -70,6 +70,8 @@ add_events([]) ->
     [];
 add_events([V = {d, '20.0'} | R]) ->
     [V, {d, 'ceil_bif'} | add_events(R)];
+add_events([V = {d, '19.0'} | R]) ->
+    [V, {d, 'rand'} | add_events(R)];
 add_events([V = {d, '18.0'} | R]) ->
     [V, {d, 'large_maps'} | add_events(R)];
 add_events([V = {d, '17.0'} | R]) ->
