@@ -46,7 +46,7 @@ version() ->
 enumerate(V) ->
     enumerate(V, []).
 
--define(HEAD_VSN, 21).
+-define(HEAD_VSN, 20).
 
 -spec enumerate({pos_integer(), non_neg_integer()}, [{d, atom()}]) -> [{d, atom()}].
 
