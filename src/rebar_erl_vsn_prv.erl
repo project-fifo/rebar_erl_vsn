@@ -48,6 +48,14 @@ enumerate(V) ->
 
 -define(HEAD_VSN, 20).
 
+-spec enumerate({pos_integer(), non_neg_integer()}, [{d, atom()}]) -> [{d, atom()}].
+
+enumerate({V, VSub}, Acc) when V > ?HEAD_VSN orelse
+                               (V =:= ?HEAD_VSN andalso VSub > 0) ->
+    rebar_api:warn("The erlang version ~p.~p is newer then the latest version "
+                   "known to rebar_erl_vsn (~p). Features introduced between "
+                   "after ~p will not have flags.", [V, ?HEAD_VSN, ?HEAD_VSN]),
+    enumerate({?HEAD_VSN, 0}, Acc);
 enumerate({?HEAD_VSN, 0}, Acc) ->
     enumerate({19, 3}, [{d, '20.0'} | Acc]);
 enumerate({19, 0}, Acc) ->
