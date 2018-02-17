@@ -38,7 +38,9 @@ format_error(Reason) ->
 
 
 version() ->
-    Vsn = rebar_api:get_arch(),
+    parse_vsn(rebar_api:get_arch()).
+
+parse_vsn(Vsn) ->
     [Vsn1 | _] = re:split(Vsn, "-"),
     [Maj, Min | _ ] = re:split(Vsn1, "\\."),
     {binary_to_integer(Maj), binary_to_integer(Min)}.
@@ -90,3 +92,19 @@ add_events([V = {d, '16.0'} | R]) ->
     [V, {d, 'new_hash'} | add_events(R)];
 add_events([V | R]) ->
     [V | add_events(R)].
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+enum_test() ->
+    [begin
+         ?assert(enumerate({Major, Minor}, []) =/= [])
+     end || Major <- lists:seq(14, ?HEAD_VSN + 1), Minor <- [1, 2, 3]].
+
+vsn_test() ->
+    ?assert(is_tuple(version())).
+
+parse_test() ->
+    ?assert(is_tuple(parse_vsn("21.0-rc0-x86_64-unknown-linux-gnu-64"))),
+    ?assert(is_tuple(parse_vsn("19.3.6.4-x86_64-apple-darwin17.3.0-64"))).
+
+-endif.
