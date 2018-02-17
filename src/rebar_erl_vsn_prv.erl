@@ -57,6 +57,8 @@ enumerate({V, VSub}, Acc) when V > ?HEAD_VSN orelse
                    "after ~p will not have flags.", [V, VSub, ?HEAD_VSN, ?HEAD_VSN]),
     enumerate({?HEAD_VSN, 0}, Acc);
 enumerate({?HEAD_VSN, 0}, Acc) ->
+    enumerate({20, 0}, [{d, '21.0'} | Acc]);
+enumerate({20, 0}, Acc) ->
     enumerate({19, 3}, [{d, '20.0'} | Acc]);
 enumerate({19, 0}, Acc) ->
     enumerate({18, 3}, [{d, '19.0'} | Acc]);
