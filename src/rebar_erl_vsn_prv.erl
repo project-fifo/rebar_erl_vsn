@@ -40,6 +40,8 @@ format_error(Reason) ->
 version() ->
     parse_vsn(rebar_api:get_arch()).
 
+parse_vsn([$R, Maj1, Maj2, $B, Min1, Min2 | _]) ->
+    {list_to_integer([Maj1, Maj2]), list_to_integer([Min1, Min2])};
 parse_vsn(Vsn) ->
     [Vsn1 | _] = re:split(Vsn, "-"),
     [Maj, Min | _ ] = re:split(Vsn1, "\\."),
