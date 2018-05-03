@@ -90,6 +90,8 @@ add_events([V = {d, '18.0'} | R]) ->
     [V, {d, 'large_maps'} | add_events(R)];
 add_events([V = {d, '17.0'} | R]) ->
     [V, {d, 'maps'}, {d, 'namespaced_types'} | add_events(R)];
+add_events([V = {d, '16.1'} | R]) ->
+    [V, {d, 'long_schedule'} | add_events(R)];
 add_events([V = {d, '16.0'} | R]) ->
     [V, {d, 'new_hash'} | add_events(R)];
 add_events([V | R]) ->
