@@ -28,8 +28,9 @@ Then just call your plugin directly in an existing application:
 
 Defines
 -------
-Each major/minor pair get a define like `17.5` or `18.0` in addition the following 'events' are defined too (in combination with the corresponding version):
+When added to your project, this plugin adds a define for each major/minor pair, such as `17.5` or `18.0`.  These are defined whenever the current version detected by the plugin is greater than the major/minor pair, so for example a build done running 19.0 will have '19.0', '18.3', '18.2', '18.1', & so on defined, down to '14.0'.
 
+For clarity, some major breakages have their own special defines.  The following are defined (in addition to their corresponding version defines):
 
 * `new_hash` (`16.0`) - new crypto:hash functions are the default and old ones deprecated.
 * `maps`, `namespaced_types` (`17.0`) - maps are introduced, types like `dict()` now require a namespace.
