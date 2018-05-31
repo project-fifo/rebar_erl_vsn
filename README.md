@@ -33,8 +33,11 @@ When added to your project, this plugin adds a define for each major/minor pair,
 For clarity, some major breakages have their own special defines.  The following are defined (in addition to their corresponding version defines):
 
 * `new_hash` (`16.0`) - new crypto:hash functions are the default and old ones deprecated.
+* `long_schedule` (`16.1`) - `long_schedule` warnings.
 * `maps`, `namespaced_types` (`17.0`) - maps are introduced, types like `dict()` now require a namespace.
-* `large_maps` (`18`) - large maps are now feasable, while in R17 they caused performance problems
+* `large_maps` (`18`) - large maps are now feasible, while in R17 they caused performance problems
+* `rand` (`19`) - introduction of the rand module.
+* `ceil_bif`, `high_bit_uniform`, `fsm_deprecated` (`20`) - we get a ceil bif, and fsm is deprecated, uniform for high bits is improved.
 
 
 Examples
