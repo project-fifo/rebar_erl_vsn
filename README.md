@@ -38,6 +38,7 @@ For clarity, some major breakages have their own special defines.  The following
 * `large_maps` (`18`) - large maps are now feasible, while in R17 they caused performance problems
 * `rand` (`19`) - introduction of the rand module.
 * `ceil_bif`, `high_bit_uniform`, `fsm_deprecated` (`20`) - we get a ceil bif, and fsm is deprecated, uniform for high bits is improved.
+* `ssl_accept_deprecated` (`21`) - `ssh:ssl_accept` is deprecated use `ssl:handshake instead` instead .
 
 
 Examples
